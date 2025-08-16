@@ -1,0 +1,9 @@
+[package]
+name = "investigator_panel"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+investigator_analyst = {path = "../investigator_analyst"}
+investigator_register = {path ="../investigator_register"}
+investigator_extractor = {path ="../investigator_extractor"}
