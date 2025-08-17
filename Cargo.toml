@@ -1,9 +1,23 @@
 [package]
 name = "investigator_panel"
-version = "0.0.0"
+version.workspace = true
 edition = "2024"
+authors.workspace = true
+
 
 [dependencies]
 investigator_analyst = {path = "../investigator_analyst"}
 investigator_register = {path ="../investigator_register"}
 investigator_extractor = {path ="../investigator_extractor"}
+
+[features]
+gui = []
+
+[[bin]]
+name = "investigator_cli"
+path = "src/bin/cli.rs"
+
+[[bin]]
+name = "investigator_gui"
+path = "src/bin/gui.rs"
+required-features = ["gui"]
