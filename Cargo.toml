@@ -1,9 +1,12 @@
 [package]
-name = "investigator_panel"
+name = "investigator"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license = "LGPL-3.0-or-later"
+default-run = "investigator_cli"
+description.workspace = true
+
 
 
 [dependencies]
