@@ -13,6 +13,8 @@ description.workspace = true
 investigator_analyst = {path = "../investigator_analyst"}
 investigator_register = {path ="../investigator_register"}
 investigator_extractor = {path ="../investigator_extractor"}
+investigator_inspector = {path ="../investigator_inspector"}
+
 
 [features]
 gui = []
