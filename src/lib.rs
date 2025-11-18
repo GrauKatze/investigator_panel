@@ -38,30 +38,30 @@ pub mod configuration {
         println!(env!("CARGO_PKG_NAME"));
         println!("version: {}", env!("CARGO_PKG_VERSION"));
         println!(env!("CARGO_PKG_DESCRIPTION"));
-        println!("\nUsage: {} [key]\n", env!("CARGO_PKG_NAME"));
+        println!("\nUsage: {} [module] <key>\n", env!("CARGO_PKG_NAME"));
         println!("KEYS:");
-        println!("{:3} | {:15} {}", "-h".bold(), "--help", "this text");
-        println!("{:3} | {:15} {}", "-v".bold(), "--version", "version");
+        println!("{:3} | {:25} {}", "-h".bold(), "--help", "this text");
+        println!("{:3} | {:25} {}", "-v".bold(), "--version", "version");
         println!(
-            "{:3} | {:15} {}",
+            "{:3} | {:25} {}",
             "-a".bold(),
             "--analyse <OPTION>",
             "analyse"
         );
         println!(
-            "{:3} | {:15} {}",
+            "{:3} | {:25} {}",
             "-e".bold(),
             "--extractor <SRC> <DST>",
             "extractor"
         );
         println!(
-            "{:3} | {:15} {}",
+            "{:3} | {:25} {}",
             "-i".bold(),
             "--inspector <SRC>",
             "inspector"
         );
-        println!("{:3} | {:15} {}", "-r".bold(), "--registr", "registr");
-        println!("{:3} | {:15} {}", "-m".bold(), "--manual <OPT>", "manual");
+        println!("{:3} | {:25} {}", "-r".bold(), "--registr", "registr");
+        println!("{:3} | {:25} {}", "-m".bold(), "--manual <OPT>", "manual");
     }
 
     fn args_pars(args: Vec<String>) -> Result<ConfigType, String> {
@@ -90,10 +90,7 @@ pub mod configuration {
                         None => Ok(ConfigType::Manual(None)),
                     },
 
-                    _ => Err(format!(
-                        "not found this arguments\n{{ {} }}",
-                        args.concat()
-                    )),
+                    _ => Err(format!("not found this arguments\n{{ {} }}", args.concat())),
                 }
             }
             None => Err("need more argument\n".to_string()),
@@ -101,25 +98,27 @@ pub mod configuration {
     }
 
     /// Initial program configuration
-    pub fn init(args: Vec<String>) {
+    pub fn init(args: Vec<String>) -> Result<ConfigType, String> {
         match args_pars(args) {
-            Ok(config_type) => match config_type {
-                ConfigType::Help => {
-                    write_help();
-                }
-                ConfigType::Version => {
-                    println!("version: {}", env!("CARGO_PKG_VERSION"));
-                }
-                //TODO: Error work
-                ConfigType::Analyse(src) => analyse::run(src).unwrap(),
-                ConfigType::Extract(src, dst) => extractor::run(src, dst).unwrap(),
-                ConfigType::Inpector(src) => inspector::run(src).unwrap(),
-                ConfigType::Manual(opt) => manual::run(opt).unwrap(),
-                ConfigType::Registr => register::run().unwrap()
-            },
-            Err(msg) => {
-                println!("{msg}\nwrite 'help' ");
+            Ok(config_type) => Ok(config_type),
+            Err(msg) => Err(msg),
+        }
+    }
+    //TODO: add doc
+    pub fn run(config_type: ConfigType) {
+        match config_type {
+            ConfigType::Help => {
+                write_help();
             }
+            ConfigType::Version => {
+                println!("version: {}", env!("CARGO_PKG_VERSION"));
+            }
+            //TODO: Error work
+            ConfigType::Analyse(src) => analyse::run(src).unwrap(),
+            ConfigType::Extract(src, dst) => extractor::run(src, dst).unwrap(),
+            ConfigType::Inpector(src) => inspector::run(src).unwrap(),
+            ConfigType::Manual(opt) => manual::run(opt).unwrap(),
+            ConfigType::Registr => register::run().unwrap(),
         }
     }
 }
