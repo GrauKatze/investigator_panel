@@ -2,46 +2,131 @@
 
 //! # Panel
 
-///module for analyst work
-mod analyst_panel {
-    fn _file_ident(file_path: String) {
-        analyst::file_identification::_file_ident(file_path).unwrap();
-    }
-}
+mod analyse;
+mod extractor;
+mod inspector;
+mod register;
 
-///module for extractor work
-mod extractor_panel {
-    pub fn _file_extract(src: String, dst: String) -> Result<(), String> {
-        if _is_path_valid(&src) && _is_path_valid(&dst) {
-            Ok(())
-        } else {
-            Err("err".to_string())
-        }
+///Setup launch program
+pub mod configuration {
+    use crate::analyse;
+    use crate::extractor;
+    use crate::inspector;
+    use crate::manual;
+    use crate::register;
+    use colored::Colorize;
+
+    /// Setup configuration
+    pub enum ConfigType {
+        /// Вывод справки
+        Help,
+        /// Вывод версии приложения
+        Version,
+        /// Analyse
+        Analyse(Option<String>),
+        /// Extract Files
+        Extract(Option<String>, Option<String>),
+        /// Inpector
+        Inpector(Option<String>),
+        /// Registr
+        Registr,
+        /// Manual
+        Manual(Option<Vec<String>>),
     }
-    pub fn _extract_from_file(src: String, dst: String) -> Result<(), String> {
-        match extractor::check_file(&src) {
-            Ok(()) => {
-                if _is_path_valid(&src) && _is_path_valid(&dst) {
-                    Ok(())
-                } else {
-                    Err("err".to_string())
+
+    fn write_help() {
+        println!(env!("CARGO_PKG_NAME"));
+        println!("version: {}", env!("CARGO_PKG_VERSION"));
+        println!(env!("CARGO_PKG_DESCRIPTION"));
+        println!("\nUsage: {} [key]\n", env!("CARGO_PKG_NAME"));
+        println!("KEYS:");
+        println!("{:3} | {:15} {}", "-h".bold(), "--help", "this text");
+        println!("{:3} | {:15} {}", "-v".bold(), "--version", "version");
+        println!(
+            "{:3} | {:15} {}",
+            "-a".bold(),
+            "--analyse <OPTION>",
+            "analyse"
+        );
+        println!(
+            "{:3} | {:15} {}",
+            "-e".bold(),
+            "--extractor <SRC> <DST>",
+            "extractor"
+        );
+        println!(
+            "{:3} | {:15} {}",
+            "-i".bold(),
+            "--inspector <SRC>",
+            "inspector"
+        );
+        println!("{:3} | {:15} {}", "-r".bold(), "--registr", "registr");
+        println!("{:3} | {:15} {}", "-m".bold(), "--manual <OPT>", "manual");
+    }
+
+    fn args_pars(args: Vec<String>) -> Result<ConfigType, String> {
+        match args.get(0) {
+            Some(p) => {
+                match p.as_str() {
+                    "-h" | "--help" | "h" | "help" => Ok(ConfigType::Help),
+                    "-v" | "--version" | "v" | "version" => Ok(ConfigType::Version),
+                    "-a" | "--analyse" | "a" | "analyze" => {
+                        let src = args.get(1);
+                        Ok(ConfigType::Analyse(src.cloned()))
+                    }
+
+                    "-e" | "--extractor" | "e" | "extractor" => {
+                        let src: Option<&String> = args.get(1);
+                        let dst: Option<&String> = args.get(2);
+                        Ok(ConfigType::Extract(src.cloned(), dst.cloned()))
+                    }
+                    "-i" | "--inspector" | "i" | "inspector" => {
+                        Ok(ConfigType::Inpector(args.get(1).cloned()))
+                    }
+                    "-r" | "--registr" | "r" | "registr" => Ok(ConfigType::Registr),
+                    //FIXME: maybe i can use only vec<string>?
+                    "-m" | "--manual" | "m" | "manual" => match args.get(1..) {
+                        Some(conf) => Ok(ConfigType::Manual(Some(conf.to_vec()))),
+                        None => Ok(ConfigType::Manual(None)),
+                    },
+
+                    _ => Err(format!(
+                        "not found this arguments\n{{ {} }}\nwrite 'help' ",
+                        args.concat()
+                    )),
                 }
             }
-            Err(msg) => Err(msg),
+            None => Err("need more argument\n".to_string()),
         }
     }
-    fn _is_path_valid(_path: &String) -> bool {
-        true
+
+    /// Initial program configuration
+    pub fn init(args: Vec<String>) {
+        match args_pars(args) {
+            Ok(config_type) => match config_type {
+                ConfigType::Help => {
+                    write_help();
+                }
+                ConfigType::Version => {
+                    println!("version: {}", env!("CARGO_PKG_VERSION"));
+                }
+                //TODO: Error work
+                ConfigType::Analyse(src) => analyse::run(src).unwrap(),
+                ConfigType::Extract(src, dst) => extractor::run(src, dst).unwrap(),
+                ConfigType::Inpector(src) => inspector::run(src).unwrap(),
+                ConfigType::Manual(opt) => manual::run(opt).unwrap(),
+                ConfigType::Registr => register::run(),
+            },
+            Err(msg) => {
+                println!("{msg}");
+            }
+        }
     }
 }
 
-///module for register work
-mod register_panel {
-    fn _reg_file(file_path: String){
-        register::take_file(file_path).unwrap()
-    }
-
-    fn _take_file(file_path: String){
-        register::give_file(file_path).unwrap()
+mod manual {
+    pub fn run(_opt: Option<Vec<String>>) -> Result<(), String> {
+        println!("MANUAL");
+        Ok(())
     }
 }
