@@ -91,7 +91,7 @@ pub mod configuration {
                     },
 
                     _ => Err(format!(
-                        "not found this arguments\n{{ {} }}\nwrite 'help' ",
+                        "not found this arguments\n{{ {} }}",
                         args.concat()
                     )),
                 }
@@ -115,10 +115,10 @@ pub mod configuration {
                 ConfigType::Extract(src, dst) => extractor::run(src, dst).unwrap(),
                 ConfigType::Inpector(src) => inspector::run(src).unwrap(),
                 ConfigType::Manual(opt) => manual::run(opt).unwrap(),
-                ConfigType::Registr => register::run(),
+                ConfigType::Registr => register::run().unwrap()
             },
             Err(msg) => {
-                println!("{msg}");
+                println!("{msg}\nwrite 'help' ");
             }
         }
     }

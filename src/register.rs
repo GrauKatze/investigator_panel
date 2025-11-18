@@ -7,6 +7,7 @@ fn _take_file(file_path: String) {
     register::give_file(file_path).unwrap()
 }
 
-pub fn run(){
+pub fn run() -> Result<(), String> {
     println!("REGISTR");
+    Ok(())
 }
