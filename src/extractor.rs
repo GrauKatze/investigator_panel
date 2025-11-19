@@ -23,23 +23,27 @@ fn _is_path_valid(_path: &String) -> bool {
     true
 }
 
-pub fn run(src: Option<String>, dst: Option<String>)-> Result<(),String>{
-   println!("EXTRATOR") ;
-   Ok(())
+pub fn run(src: Option<String>, dst: Option<String>) -> Result<(), String> {
+    println!("EXTRATOR");
+    Ok(())
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::analyse::run;
+    use crate::extractor::run;
     #[test]
     fn run_test_with_empty_src() {
         let src = Some(String::new());
-        assert_eq!(Ok(()), run(src));
+        let dst = Some(String::new());
+
+        assert_eq!(Ok(()), run(src, dst));
     }
 
     #[test]
     fn run_test_with_self() {
         let src = Some(String::from("src/extractor.rs"));
-        assert_eq!(Ok(()), run(src));
+        let dst = Some(String::new());
+
+        assert_eq!(Ok(()), run(src, dst));
     }
 }

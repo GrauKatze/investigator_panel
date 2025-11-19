@@ -29,7 +29,7 @@ pub mod configuration {
         /// Inpector
         Inpector(Option<String>),
         /// Registr
-        Registr,
+        Registr(Option<String>),
         /// Manual
         Manual(Option<Vec<String>>),
     }
@@ -83,7 +83,9 @@ pub mod configuration {
                     "-i" | "--inspector" | "i" | "inspector" => {
                         Ok(ConfigType::Inpector(args.get(1).cloned()))
                     }
-                    "-r" | "--registr" | "r" | "registr" => Ok(ConfigType::Registr),
+                    "-r" | "--registr" | "r" | "registr" => {
+                        Ok(ConfigType::Registr(args.get(1).cloned()))
+                    }
                     //FIXME: maybe i can use only vec<string>?
                     "-m" | "--manual" | "m" | "manual" => match args.get(1..) {
                         Some(conf) => Ok(ConfigType::Manual(Some(conf.to_vec()))),
@@ -93,7 +95,7 @@ pub mod configuration {
                     _ => Err(format!("not found this arguments\n{{ {} }}", args.concat())),
                 }
             }
-            None => Err("need more argument\n".to_string()),
+            None => Err("need more argument".to_string()),
         }
     }
 
@@ -118,7 +120,7 @@ pub mod configuration {
             ConfigType::Extract(src, dst) => extractor::run(src, dst).unwrap(),
             ConfigType::Inpector(src) => inspector::run(src).unwrap(),
             ConfigType::Manual(opt) => manual::run(opt).unwrap(),
-            ConfigType::Registr => register::run().unwrap(),
+            ConfigType::Registr(src) => register::run(src).unwrap(),
         }
     }
 }

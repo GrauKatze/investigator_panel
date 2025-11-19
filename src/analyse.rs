@@ -12,7 +12,7 @@ fn analyse(src: String) -> Result<(), String> {
 }
 
 pub fn run(src: Option<String>) -> Result<(), String> {
-    // println!("ANALYSE");
+    println!("ANALYSE");
     match src {
         Some(path) => match analyse(path) {
             Ok(()) => Ok(()),
@@ -25,11 +25,11 @@ pub fn run(src: Option<String>) -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::analyse::run;
+    use super::*;
     #[test]
     fn run_test_with_empty_src() {
         let src = Some(String::new());
-        assert_eq!(Ok(()), run(src));
+        assert_eq!(Err(String::from("path is not valid, path: ''")), run(src));
     }
 
     #[test]

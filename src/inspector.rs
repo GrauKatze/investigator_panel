@@ -5,7 +5,7 @@ pub fn run(src: Option<String>) -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::inspector::run;
+    use super::*;
     #[test]
     fn run_test_with_empty_src() {
         let src = Some(String::new());
