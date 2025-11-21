@@ -15,6 +15,7 @@ investigator_register = {path ="../investigator_register"}
 investigator_extractor = {path ="../investigator_extractor"}
 investigator_inspector = {path ="../investigator_inspector"}
 colored = "3.0.0"
+log = "0.4.28"
 
 
 [features]

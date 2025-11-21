@@ -17,13 +17,14 @@ pub mod configuration {
     use colored::Colorize;
 
     /// Setup configuration
+    #[derive(Debug)]
     pub enum ConfigType {
         /// Вывод справки
         Help,
         /// Вывод версии приложения
         Version,
         /// Analyse
-        Analyse(Option<String>),
+        Analyse(Option<Vec<String>>),
         /// Extract Files
         Extract(Option<String>, Option<String>),
         /// Inpector
@@ -71,8 +72,11 @@ pub mod configuration {
                     "-h" | "--help" | "h" | "help" => Ok(ConfigType::Help),
                     "-v" | "--version" | "v" | "version" => Ok(ConfigType::Version),
                     "-a" | "--analyse" | "a" | "analyze" => {
-                        let src = args.get(1);
-                        Ok(ConfigType::Analyse(src.cloned()))
+                        let src: Option<Vec<String>> = match args.get(1..) {
+                            Some(opt) => Some(opt.to_vec()),
+                            None => None,
+                        };
+                        Ok(ConfigType::Analyse(src))
                     }
 
                     "-e" | "--extractor" | "e" | "extractor" => {
@@ -101,26 +105,30 @@ pub mod configuration {
 
     /// Initial program configuration
     pub fn init(args: Vec<String>) -> Result<ConfigType, String> {
+        // dbg!(&args);
         match args_pars(args) {
             Ok(config_type) => Ok(config_type),
             Err(msg) => Err(msg),
         }
     }
     //TODO: add doc
-    pub fn run(config_type: ConfigType) {
+    #[allow(missing_docs)]
+    pub fn run(config_type: ConfigType) -> Result<(),String>{
         match config_type {
             ConfigType::Help => {
                 write_help();
+                Ok(())
             }
             ConfigType::Version => {
                 println!("version: {}", env!("CARGO_PKG_VERSION"));
+                Ok(())
             }
             //TODO: Error work
-            ConfigType::Analyse(src) => analyse::run(src).unwrap(),
-            ConfigType::Extract(src, dst) => extractor::run(src, dst).unwrap(),
-            ConfigType::Inpector(src) => inspector::run(src).unwrap(),
-            ConfigType::Manual(opt) => manual::run(opt).unwrap(),
-            ConfigType::Registr(src) => register::run(src).unwrap(),
+            ConfigType::Analyse(src) => analyse::run(src.expect("msg")),
+            ConfigType::Extract(src, dst) => extractor::run(src, dst),
+            ConfigType::Inpector(src) => inspector::run(src),
+            ConfigType::Manual(opt) => manual::run(opt),
+            ConfigType::Registr(src) => register::run(src),
         }
     }
 }

@@ -1,4 +1,4 @@
-pub fn run(src: Option<String>) -> Result<(), String> {
+pub fn run(_src: Option<String>) -> Result<(), String> {
     println!("INSPECTOR");
     Ok(())
 }

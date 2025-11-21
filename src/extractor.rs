@@ -1,7 +1,9 @@
 //! module for extractor work
 
+use std::path::Path;
+
 pub fn _file_extract(src: String, dst: String) -> Result<(), String> {
-    if _is_path_valid(&src) && _is_path_valid(&dst) {
+    if Path::exists(Path::new(&src)) && Path::exists(Path::new(&dst)) {
         Ok(())
     } else {
         Err("err".to_string())
@@ -10,7 +12,7 @@ pub fn _file_extract(src: String, dst: String) -> Result<(), String> {
 pub fn _extract_from_file(src: String, dst: String) -> Result<(), String> {
     match extractor::check_file(&src) {
         Ok(()) => {
-            if _is_path_valid(&src) && _is_path_valid(&dst) {
+            if Path::exists(Path::new(&src)) && Path::exists(Path::new(&dst)) {
                 Ok(())
             } else {
                 Err("err".to_string())
@@ -19,12 +21,9 @@ pub fn _extract_from_file(src: String, dst: String) -> Result<(), String> {
         Err(msg) => Err(msg),
     }
 }
-fn _is_path_valid(_path: &String) -> bool {
-    true
-}
 
-pub fn run(src: Option<String>, dst: Option<String>) -> Result<(), String> {
-    println!("EXTRATOR");
+pub fn run(_src: Option<String>, _dst: Option<String>) -> Result<(), String> {
+    println!("EXTRACTOR");
     Ok(())
 }
 
