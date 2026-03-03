@@ -1,21 +1,13 @@
 use crate::Manual;
 
-struct Inspector;
+pub struct Inspector;
 
 impl Manual for Inspector {
-    fn run(_opt: Option<Vec<String>>)->Result<(),String> {
+    fn run(_src: Option<Vec<String>>) -> Result<(), String> {
+        println!("INSPECTOR");
         Ok(())
     }
 }
 
-
-
-pub fn run(_src: Option<Vec<String>>) -> Result<(), String> {
-    println!("INSPECTOR");
-    Ok(())
-}
-
 #[cfg(test)]
-mod tests {
-
-}
+mod tests {}

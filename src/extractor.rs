@@ -2,7 +2,7 @@
 
 use crate::Manual;
 
-struct Extractor;
+pub struct Extractor;
 
 impl Manual for Extractor {
     fn run(_opt: Option<Vec<String>>) -> Result<(), String> {

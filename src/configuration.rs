@@ -104,8 +104,8 @@ pub fn run(config_type: ConfigType) -> Result<(), String> {
         }
         //TODO: Error work
         ConfigType::Analyse(opt) => analyse::Analyser::run(opt),
-        ConfigType::Extract(opt) => extractor::run(opt),
-        ConfigType::Inpector(src) => inspector::run(src),
+        ConfigType::Extract(opt) => extractor::Extractor::run(opt),
+        ConfigType::Inpector(src) => inspector::Inspector::run(src),
         ConfigType::Registr(src) => register::run(src),
     }
 }
