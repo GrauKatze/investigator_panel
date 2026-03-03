@@ -1,13 +1,12 @@
+use crate::Manual;
 use crate::analyse;
 use crate::extractor;
 use crate::inspector;
-use crate::manual;
 use crate::register;
 use colored::Colorize;
 use log::debug;
 
 /// Setup configuration
-#[derive(Debug)]
 pub enum ConfigType {
     /// Вывод справки
     Help,
@@ -16,15 +15,14 @@ pub enum ConfigType {
     /// Analyse
     Analyse(Option<Vec<String>>),
     /// Extract Files
-    Extract(Option<String>, Option<String>),
+    Extract(Option<Vec<String>>),
     /// Inpector
-    Inpector(Option<String>),
+    Inpector(Option<Vec<String>>),
     /// Registr
-    Registr(Option<String>),
-    /// Manual
-    Manual(Option<Vec<String>>),
+    Registr(Option<Vec<String>>),
 }
 
+// TODO:Обновить справку
 fn write_help() {
     println!(env!("CARGO_PKG_NAME"));
     println!("version: {}", env!("CARGO_PKG_VERSION"));
@@ -52,7 +50,6 @@ fn write_help() {
         "inspector"
     );
     println!("{:3} | {:25} {}", "-r".bold(), "--registr", "registr");
-    println!("{:3} | {:25} {}", "-m".bold(), "--manual <OPT>", "manual");
 }
 
 fn args_pars(args: Vec<String>) -> Result<ConfigType, String> {
@@ -65,17 +62,17 @@ fn args_pars(args: Vec<String>) -> Result<ConfigType, String> {
                 None => Ok(ConfigType::Analyse(None)),
             },
 
-            "-e" | "--extractor" | "e" | "extractor" => Ok(ConfigType::Extract(
-                args.get(1).cloned(),
-                args.get(2).cloned(),
-            )),
-            "-i" | "--inspector" | "i" | "inspector" => {
-                Ok(ConfigType::Inpector(args.get(1).cloned()))
-            }
-            "-r" | "--registr" | "r" | "registr" => Ok(ConfigType::Registr(args.get(1).cloned())),
-            "-m" | "--manual" | "m" | "manual" => match args.get(1..) {
-                Some(conf) => Ok(ConfigType::Manual(Some(conf.to_vec()))),
-                None => Ok(ConfigType::Manual(None)),
+            "-e" | "--extractor" | "e" | "extractor" => match args.get(1..) {
+                Some(conf) => Ok(ConfigType::Extract(Some(conf.to_vec()))),
+                None => Ok(ConfigType::Extract(None)),
+            },
+            "-i" | "--inspector" | "i" | "inspector" => match args.get(1..) {
+                Some(conf) => Ok(ConfigType::Inpector(Some(conf.to_vec()))),
+                None => Ok(ConfigType::Inpector(None)),
+            },
+            "-r" | "--registr" | "r" | "registr" => match args.get(1..) {
+                Some(conf) => Ok(ConfigType::Registr(Some(conf.to_vec()))),
+                None => Ok(ConfigType::Registr(None)),
             },
 
             _ => Err(format!("not found this arguments\n{{ {} }}", args.concat())),
@@ -92,6 +89,7 @@ pub fn init(args: Vec<String>) -> Result<ConfigType, String> {
         Err(msg) => Err(msg),
     }
 }
+
 //TODO: add doc
 #[allow(missing_docs)]
 pub fn run(config_type: ConfigType) -> Result<(), String> {
@@ -105,10 +103,9 @@ pub fn run(config_type: ConfigType) -> Result<(), String> {
             Ok(())
         }
         //TODO: Error work
-        ConfigType::Analyse(src) => analyse::run(src),
-        ConfigType::Extract(src, dst) => extractor::run(src, dst),
+        ConfigType::Analyse(opt) => analyse::Analyser::run(opt),
+        ConfigType::Extract(opt) => extractor::run(opt),
         ConfigType::Inpector(src) => inspector::run(src),
-        ConfigType::Manual(opt) => manual::run(opt),
         ConfigType::Registr(src) => register::run(src),
     }
 }

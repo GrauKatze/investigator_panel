@@ -1,5 +1,3 @@
-#![warn(missing_docs)]
-
 //! # Panel
 
 mod analyse;
@@ -10,9 +8,6 @@ mod register;
 ///Setup launch program
 pub mod configuration;
 
-mod manual {
-    pub fn run(_opt: Option<Vec<String>>) -> Result<(), String> {
-        println!("MANUAL");
-        Ok(())
-    }
+trait Manual {
+    fn run(_opt: Option<Vec<String>>)->Result<(),String>;
 }
