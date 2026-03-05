@@ -10,7 +10,10 @@ pub struct IInspector {
 impl ComponentWorker for IInspector {
     fn run(&self) -> Result<(), String> {
         match &self.configure {
-            ComponentConfig::Command(_opt) => self::Inspector::build(_opt).run(),
+            ComponentConfig::Command(opt) => match self::Inspector::build(opt) {
+                Ok(inspector_component) => inspector_component.run(),
+                Err(msg) => Err(format!("Inspector ERROR:\n{}", msg)),
+            },
             ComponentConfig::Help => self::Inspector::write_help_msg(),
             ComponentConfig::Version => Err("not write".to_string()),
         }

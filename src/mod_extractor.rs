@@ -10,7 +10,10 @@ pub struct IExtractor {
 impl ComponentWorker for IExtractor {
     fn run(&self) -> Result<(), String> {
         match &self.configure {
-            ComponentConfig::Command(opt) => self::Extractor::build(opt).run(),
+            ComponentConfig::Command(opt) => match self::Extractor::build(opt) {
+                Ok(Extractor_component) => Extractor_component.run(),
+                Err(msg) => Err(format!("Extractor ERROR:\n{}", msg)),
+            },
             ComponentConfig::Help => self::Extractor::write_help_msg(),
             ComponentConfig::Version => self::Extractor::write_version_msg(),
         }

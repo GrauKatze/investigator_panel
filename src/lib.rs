@@ -58,10 +58,10 @@ impl Panel {
                                 "-v" | "--version" | "v" | "version" => {
                                     Ok(ComponentConfig::Version)
                                 }
-                                _ => Err(format!(
-                                    "not found this arguments\n{{ {} }}",
-                                    options.concat()
-                                )),
+                                _ => {
+                                    let command_collect: Vec<String> = options[1..].to_vec();
+                                    Ok(ComponentConfig::Command(Some(command_collect)))
+                                }
                             },
                             None => Err("need mode argemunts".to_string()),
                         };
@@ -74,10 +74,10 @@ impl Panel {
                                 "-v" | "--version" | "v" | "version" => {
                                     Ok(ComponentConfig::Version)
                                 }
-                                _ => Err(format!(
-                                    "not found this arguments\n{{ {} }}",
-                                    options.concat()
-                                )),
+                                _ => {
+                                    let command_collect: Vec<String> = options[1..].to_vec();
+                                    Ok(ComponentConfig::Command(Some(command_collect)))
+                                }
                             },
                             None => Err("need mode argemunts".to_string()),
                         };
@@ -90,10 +90,10 @@ impl Panel {
                                 "-v" | "--version" | "v" | "version" => {
                                     Ok(ComponentConfig::Version)
                                 }
-                                _ => Err(format!(
-                                    "not found this arguments\n{{ {} }}",
-                                    options.concat()
-                                )),
+                                _ => {
+                                    let command_collect: Vec<String> = options[1..].to_vec();
+                                    Ok(ComponentConfig::Command(Some(command_collect)))
+                                }
                             },
                             None => Err("need mode argemunts".to_string()),
                         };
