@@ -13,7 +13,7 @@ pub mod mod_register;
 enum Config {
     Help,
     Version,
-    Command(Component, Option<Vec<String>>),
+    RunComponent(Component),
 }
 
 enum Component {
@@ -35,70 +35,18 @@ impl Panel {
                 Some(p) => match p.as_str() {
                     "-h" | "--help" | "h" | "help" => Ok(Config::Help),
                     "-v" | "--version" | "v" | "version" => Ok(Config::Version),
-                    "-a" | "--analyser" | "a" | "analyser" => {
-                        let conf = match options.get(1) {
-                            Some(pp) => match pp.as_str() {
-                                "-h" | "--help" | "h" | "help" => Ok(ComponentConfig::Help),
-                                "-v" | "--version" | "v" | "version" => {
-                                    Ok(ComponentConfig::Version)
-                                }
-                                _ => {
-                                    let command_collect: Vec<String> = options[1..].to_vec();
-                                    Ok(ComponentConfig::Command(Some(command_collect)))
-                                }
-                            },
-                            None => Err("need mode argemunts".to_string()),
-                        };
-                        Ok(Config::Command(Component::Anayser(conf.unwrap()), None))
-                    }
-                    "-e" | "--extractor" | "e" | "extractor" => {
-                        let conf = match options.get(1) {
-                            Some(pp) => match pp.as_str() {
-                                "-h" | "--help" | "h" | "help" => Ok(ComponentConfig::Help),
-                                "-v" | "--version" | "v" | "version" => {
-                                    Ok(ComponentConfig::Version)
-                                }
-                                _ => {
-                                    let command_collect: Vec<String> = options[1..].to_vec();
-                                    Ok(ComponentConfig::Command(Some(command_collect)))
-                                }
-                            },
-                            None => Err("need mode argemunts".to_string()),
-                        };
-                        Ok(Config::Command(Component::Extractor(conf.unwrap()), None))
-                    }
-                    "-i" | "--inspector" | "i" | "inspector" => {
-                        let conf = match options.get(1) {
-                            Some(pp) => match pp.as_str() {
-                                "-h" | "--help" | "h" | "help" => Ok(ComponentConfig::Help),
-                                "-v" | "--version" | "v" | "version" => {
-                                    Ok(ComponentConfig::Version)
-                                }
-                                _ => {
-                                    let command_collect: Vec<String> = options[1..].to_vec();
-                                    Ok(ComponentConfig::Command(Some(command_collect)))
-                                }
-                            },
-                            None => Err("need mode argemunts".to_string()),
-                        };
-                        Ok(Config::Command(Component::Inspector(conf.unwrap()), None))
-                    }
-                    "-r" | "--register" | "r" | "register" => {
-                        let conf = match options.get(1) {
-                            Some(pp) => match pp.as_str() {
-                                "-h" | "--help" | "h" | "help" => Ok(ComponentConfig::Help),
-                                "-v" | "--version" | "v" | "version" => {
-                                    Ok(ComponentConfig::Version)
-                                }
-                                _ => {
-                                    let command_collect: Vec<String> = options[1..].to_vec();
-                                    Ok(ComponentConfig::Command(Some(command_collect)))
-                                }
-                            },
-                            None => Err("need mode argemunts".to_string()),
-                        };
-                        Ok(Config::Command(Component::Register(conf.unwrap()), None))
-                    }
+                    "-a" | "--analyser" | "a" | "analyser" => Ok(Config::RunComponent(
+                        Component::Anayser(ComponentConfig::build(options)),
+                    )),
+                    "-e" | "--extractor" | "e" | "extractor" => Ok(Config::RunComponent(
+                        Component::Extractor(ComponentConfig::build(options)),
+                    )),
+                    "-i" | "--inspector" | "i" | "inspector" => Ok(Config::RunComponent(
+                        Component::Inspector(ComponentConfig::build(options)),
+                    )),
+                    "-r" | "--register" | "r" | "register" => Ok(Config::RunComponent(
+                        Component::Register(ComponentConfig::build(options)),
+                    )),
                     _ => Err(format!(
                         "not found this arguments\n{{ {:?} }}",
                         options.iter().collect::<Vec<&String>>()
@@ -119,12 +67,11 @@ impl Panel {
     }
     pub fn run(&self) -> Result<(), String> {
         match &self.configuration {
-            Config::Command(modul, _opt) => match modul {
+            Config::RunComponent(modul) => match modul {
                 Component::Extractor(comp_conf) => IExtractor::build(comp_conf).run(),
                 Component::Anayser(comp_conf) => IAnalyser::build(comp_conf).run(),
                 Component::Register(comp_conf) => IRegister::build(comp_conf).run(),
                 Component::Inspector(comp_conf) => IInspector::build(comp_conf).run(),
-                _ => Err("not ready".to_string()),
             },
             Config::Help => {
                 Self::write_help_msg();
@@ -150,6 +97,22 @@ enum ComponentConfig {
     Help,
     Version,
     Command(Option<Vec<String>>),
+}
+
+impl ComponentConfig {
+    fn build(options: Vec<String>) -> ComponentConfig {
+        match options.get(1) {
+            Some(option) => match option.as_str() {
+                "-h" | "--help" | "h" | "help" => ComponentConfig::Help,
+                "-v" | "--version" | "v" | "version" => ComponentConfig::Version,
+                _ => {
+                    let command_collect: Vec<String> = options[1..].to_vec();
+                    ComponentConfig::Command(Some(command_collect))
+                }
+            },
+            None => ComponentConfig::Command(None),
+        }
+    }
 }
 
 trait ComponentWorker {

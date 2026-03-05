@@ -1,5 +1,4 @@
 //! module for analyst work
-use std::path::Component;
 
 use crate::{ComponentBuilder, ComponentConfig, ComponentWorker};
 use analyst::Analyser;

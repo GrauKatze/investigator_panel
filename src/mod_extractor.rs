@@ -11,7 +11,7 @@ impl ComponentWorker for IExtractor {
     fn run(&self) -> Result<(), String> {
         match &self.configure {
             ComponentConfig::Command(opt) => match self::Extractor::build(opt) {
-                Ok(Extractor_component) => Extractor_component.run(),
+                Ok(extractor_component) => extractor_component.run(),
                 Err(msg) => Err(format!("Extractor ERROR:\n{}", msg)),
             },
             ComponentConfig::Help => self::Extractor::write_help_msg(),
